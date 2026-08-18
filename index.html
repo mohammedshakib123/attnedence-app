@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#090d16" />
+  <meta name="description" content="AttendanceIQ Mobile Pro — Autonomous Academic Attendance App for Mohammed Shakib" />
+  <title>AttendanceIQ — Mobile Intelligence App</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@500;600;700;800&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+  <!-- BACKGROUND AMBIENT GLOW MESH -->
+  <div class="ambient-glow-mesh" aria-hidden="true">
+    <div class="mesh-orb orb-indigo"></div>
+    <div class="mesh-orb orb-cyan"></div>
+    <div class="mesh-orb orb-purple"></div>
+  </div>
+
+  <!-- LEFT SIDEBAR / MOBILE SLIDEOUT DRAWER -->
+  <aside class="left-sidebar" id="left-sidebar">
+    <div class="sidebar-top-brand">
+      <div class="brand-badge-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z" />
+          <path d="M6 6h10" />
+          <path d="M6 10h10" />
+          <path d="M6 14h6" />
+        </svg>
+      </div>
+      <div class="brand-texts">
+        <div class="brand-name">Attendance<span class="brand-iq">IQ</span></div>
+        <div class="brand-tag">Autonomous Mobile Hub</div>
+      </div>
+      <button class="sidebar-close-btn" onclick="toggleSidebar()" aria-label="Close menu">✕</button>
+    </div>
+
+    <!-- Student Profile Card inside Sidebar -->
+    <div class="sidebar-profile-card">
+      <div class="profile-avatar-circle">MS</div>
+      <div class="profile-meta">
+        <div class="profile-name">Mohammed Shakib</div>
+        <div class="profile-sub">II B.Tech · CSE (AI &amp; ML)</div>
+        <div class="profile-badge">MV 308 · SEC</div>
+      </div>
+    </div>
+
+    <!-- Navigation Links in Left Sidebar -->
+    <nav class="sidebar-nav-list">
+      <div class="nav-section-title">MAIN NAVIGATION</div>
+
+      <button class="sidebar-link active" data-page="dashboard" onclick="navigate('dashboard')">
+        <span class="s-icon">🏠</span>
+        <span class="s-text">Overview Dashboard</span>
+      </button>
+
+      <button class="sidebar-link" data-page="attendance" onclick="navigate('attendance')">
+        <span class="s-icon">📋</span>
+        <span class="s-text">Today's Class Schedule</span>
+        <span class="s-pill" id="side-today-count">6</span>
+      </button>
+
+      <button class="sidebar-link" data-page="subjects" onclick="navigate('subjects')">
+        <span class="s-icon">📚</span>
+        <span class="s-text">Course Matrix &amp; Ledger</span>
+      </button>
+
+      <button class="sidebar-link" data-page="advisor" onclick="navigate('advisor')">
+        <span class="s-icon">🤖</span>
+        <span class="s-text">AI Copilot Advisor</span>
+        <span class="s-pill pill-cyan">AI</span>
+      </button>
+
+      <button class="sidebar-link" data-page="whatif" onclick="navigate('whatif')">
+        <span class="s-icon">🔮</span>
+        <span class="s-text">What-If Simulator</span>
+      </button>
+
+      <div class="nav-section-title" style="margin-top:1.2rem">ACADEMIC TOOLS</div>
+
+      <button class="sidebar-link" data-page="calendar" onclick="navigate('calendar')">
+        <span class="s-icon">📅</span>
+        <span class="s-text">Interactive Calendar</span>
+      </button>
+
+      <button class="sidebar-link" data-page="timetable" onclick="navigate('timetable')">
+        <span class="s-icon">🗓️</span>
+        <span class="s-text">Master Timetable</span>
+      </button>
+
+      <button class="sidebar-link" data-page="history" onclick="navigate('history')">
+        <span class="s-icon">📖</span>
+        <span class="s-text">Audit Logs &amp; Archives</span>
+      </button>
+
+      <button class="sidebar-link" data-page="achievements" onclick="navigate('achievements')">
+        <span class="s-icon">🏆</span>
+        <span class="s-text">Badges &amp; Milestones</span>
+      </button>
+
+      <button class="sidebar-link" data-page="settings" onclick="navigate('settings')">
+        <span class="s-icon">⚙️</span>
+        <span class="s-text">Settings &amp; Backup</span>
+      </button>
+    </nav>
+
+    <!-- Sidebar Footer Theme & Info -->
+    <div class="sidebar-footer">
+      <button class="theme-toggle-bar" onclick="toggleTheme()">
+        <span id="theme-icon">🌙</span>
+        <span id="theme-text">Switch Lighting</span>
+      </button>
+      <div class="app-version">AttendanceIQ Mobile v3.2</div>
+    </div>
+  </aside>
+
+  <!-- SIDEBAR OVERLAY BACKDROP -->
+  <div class="sidebar-backdrop" id="sidebar-backdrop" onclick="toggleSidebar()"></div>
+
+  <!-- APP MAIN WRAPPER -->
+  <div class="app-main-wrapper">
+
+    <!-- MOBILE & DESKTOP TOP HEADER -->
+    <header class="app-topbar">
+      <div class="topbar-left">
+        <!-- LEFT SIDEBAR TOGGLE BUTTON -->
+        <button class="menu-toggle-btn" onclick="toggleSidebar()" aria-label="Open Left Menu">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"
+            stroke-linecap="round">
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="12" x2="16" y2="12" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          </svg>
+        </button>
+        <div class="topbar-page-info">
+          <div class="topbar-page-title" id="topbar-title">Overview Dashboard</div>
+          <div class="topbar-page-sub" id="topbar-subtitle">Sphoorthy Engineering College</div>
+        </div>
+      </div>
+
+      <div class="topbar-right">
+        <!-- Live Lecture Radar Badge -->
+        <div class="live-lecture-pill" id="topbar-live-badge">
+          <span class="pulse-green-dot"></span>
+          <span id="topbar-live-text">Checking Live Period...</span>
+        </div>
+
+        <!-- Overall Score Chip -->
+        <div class="topbar-score-chip" onclick="navigate('advisor')">
+          <span class="score-label">ATTENDANCE</span>
+          <span class="score-number" id="topbar-pct-val">0.0%</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- APP SCROLLABLE CONTENT BODY -->
+    <main class="app-body">
+
+      <!-- ============================================================
+           1. OVERVIEW DASHBOARD
+           ============================================================ -->
+      <section class="app-view active" id="page-dashboard">
+
+        <!-- HERO RADIAL METRIC CARD -->
+        <div class="hero-stats-card">
+          <div class="hero-card-left">
+            <div class="hero-date-badge" id="hero-date-text">Today</div>
+            <h2 class="hero-greeting" id="hero-greeting-text">Welcome, Shakib 👋</h2>
+            <p class="hero-subtext">II B.Tech · I SEM · CSE (AI &amp; ML) · MV 308</p>
+
+            <div class="hero-action-buttons">
+              <button class="btn-action-primary" onclick="markAllToday('present')">
+                <span class="btn-icon">✓</span> Mark Full Day Present
+              </button>
+              <button class="btn-action-secondary" onclick="markAllToday('absent')">
+                <span class="btn-icon">✕</span> Mark Full Day Absent
+              </button>
+              <button class="btn-action-secondary" onclick="markTodayHoliday()">
+                <span class="btn-icon">🏖️</span> Toggle Holiday
+              </button>
+            </div>
+          </div>
+
+          <!-- Circular Metric Ring -->
+          <div class="hero-card-right">
+            <div class="radial-ring-container">
+              <svg class="radial-ring-svg" viewBox="0 0 160 160">
+                <defs>
+                  <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#06b6d4" />
+                    <stop offset="50%" stop-color="#6366f1" />
+                    <stop offset="100%" stop-color="#a855f7" />
+                  </linearGradient>
+                </defs>
+                <circle class="ring-bg-track" cx="80" cy="80" r="68" />
+                <circle class="ring-fill-bar" id="ring-fill" cx="80" cy="80" r="68" />
+              </svg>
+              <div class="ring-inner-center">
+                <div class="ring-pct-val" id="ring-pct">0.0%</div>
+                <div class="ring-status-tag" id="dash-target-status">SAFE ZONE</div>
+              </div>
+            </div>
+            <div class="ring-target-label">Target: <strong id="dash-target-val">75%</strong></div>
+          </div>
+        </div>
+
+        <!-- REAL-TIME LIVE CLASS RADAR BILLBOARD -->
+        <div class="live-class-billboard" id="live-class-billboard">
+          <!-- Populated dynamically by updateLivePeriodRadar() -->
+        </div>
+
+        <!-- AI COPILOT FORECAST BANNER -->
+        <div class="ai-copilot-banner">
+          <div class="ai-bot-icon">🤖</div>
+          <div class="ai-bot-text-group">
+            <div class="ai-bot-title">AI COPILOT PREDICTIVE ADVICE</div>
+            <div class="ai-bot-msg" id="smart-insight-text">Analyzing your lecture attendance patterns...</div>
+          </div>
+        </div>
+
+        <!-- MOBILE KPI STATS CARDS GRID -->
+        <div class="mobile-kpi-grid">
+          <div class="m-kpi-card border-emerald">
+            <div class="m-kpi-icon">✅</div>
+            <div class="m-kpi-num text-emerald" id="dash-attended">0</div>
+            <div class="m-kpi-lbl">Classes Attended</div>
+          </div>
+
+          <div class="m-kpi-card border-rose">
+            <div class="m-kpi-icon">❌</div>
+            <div class="m-kpi-num text-rose" id="dash-missed">0</div>
+            <div class="m-kpi-lbl">Classes Missed</div>
+          </div>
+
+          <div class="m-kpi-card border-indigo">
+            <div class="m-kpi-icon">📚</div>
+            <div class="m-kpi-num text-indigo" id="dash-total">0</div>
+            <div class="m-kpi-lbl">Total Conducted</div>
+          </div>
+
+          <div class="m-kpi-card border-amber">
+            <div class="m-kpi-icon">📆</div>
+            <div class="m-kpi-num text-amber" id="sem-term-pct">0%</div>
+            <div class="m-kpi-lbl" id="sem-term-days">Term Progress</div>
+          </div>
+        </div>
+
+        <!-- TODAY'S CLASS SCHEDULE (MOBILE CARDS) -->
+        <div class="app-section-header">
+          <div>
+            <h3 class="section-title">Today's Class Schedule</h3>
+            <p class="section-subtitle" id="dash-today-label">Live periods &amp; timings</p>
+          </div>
+          <button class="link-btn" onclick="navigate('attendance')">Audit All Days ›</button>
+        </div>
+
+        <!-- ALL-TOGGLE ACTION TOOLBAR -->
+        <div class="all-toggle-toolbar">
+          <div class="all-toggle-label">⚡ Quick Mark All:</div>
+          <div class="all-toggle-buttons">
+            <button class="btn-quick-toggle toggle-present" onclick="markAllToday('present')">
+              ✓ All Present
+            </button>
+            <button class="btn-quick-toggle toggle-absent" onclick="markAllToday('absent')">
+              ✕ All Absent
+            </button>
+            <button class="btn-quick-toggle toggle-holiday" onclick="markTodayHoliday()">
+              🏖️ College Holiday
+            </button>
+            <button class="btn-quick-toggle toggle-reset" onclick="resetTodayAttendance()">
+              🔄 Reset Unmarked
+            </button>
+          </div>
+        </div>
+
+        <div class="today-schedule-cards" id="today-classes-cards">
+          <!-- Injected dynamically as interactive touch cards -->
+        </div>
+
+        <!-- COURSE HEALTH MATRIX CARDS -->
+        <div class="app-section-header" style="margin-top:2rem">
+          <div>
+            <h3 class="section-title">Subject Health Matrix</h3>
+            <p class="section-subtitle">Attendance percentages per semester course</p>
+          </div>
+          <button class="link-btn" onclick="navigate('subjects')">Full Ledger ›</button>
+        </div>
+
+        <div class="courses-cards-grid" id="dash-subject-bars">
+          <!-- Injected dynamically -->
+        </div>
+
+        <!-- STREAKS & TREND -->
+        <div class="app-section-header" style="margin-top:2rem">
+          <div>
+            <h3 class="section-title">Milestone Streaks</h3>
+            <p class="section-subtitle">Consistency records</p>
+          </div>
+        </div>
+
+        <div class="streaks-mobile-row" id="streaks-row"></div>
+
+        <!-- TREND CHART -->
+        <div class="app-section-header" style="margin-top:2rem">
+          <div>
+            <h3 class="section-title">Weekly Attendance Velocity</h3>
+            <p class="section-subtitle">8-Week compliance history</p>
+          </div>
+          <span class="status-chip chip-safe" id="trend-direction">↔ Steady</span>
+        </div>
+
+        <div class="app-card-panel">
+          <div id="trend-content"></div>
+        </div>
+
+      </section>
+
+      <!-- ============================================================
+           2. TODAY'S SCHEDULE & AUDIT
+           ============================================================ -->
+      <section class="app-view" id="page-attendance">
+        <div class="view-intro-header">
+          <h2 class="view-title">Daily Attendance Schedule</h2>
+          <p class="view-subtitle">Select any date to log or update lecture attendance.</p>
+        </div>
+
+        <div class="app-card-panel" style="margin-bottom:1.5rem">
+          <div class="date-selector-row">
+            <label>Select Audit Date:</label>
+            <input type="date" id="attendance-date-picker" onchange="loadAttendancePage()" class="app-input-date" />
+          </div>
+          <div class="date-header-info" id="attendance-day-info"></div>
+          <div class="quick-toggle-toolbar" id="att-quick-actions"></div>
+        </div>
+
+        <div class="today-schedule-cards" id="attendance-classes-list"></div>
+
+        <div class="app-save-bar">
+          <button class="btn-action-primary" id="save-attendance-btn" onclick="saveAttendance()">
+            💾 Save &amp; Synchronize Log
+          </button>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           3. COURSE MATRIX & ACADEMIC LEDGER
+           ============================================================ -->
+      <section class="app-view" id="page-subjects">
+        <div class="view-intro-header">
+          <h2 class="view-title">Course Attendance Matrix &amp; Ledger</h2>
+          <p class="view-subtitle">Individual subject breakdowns, credit hours, and minimum compliance calculations.</p>
+        </div>
+
+        <!-- Course Performance KPI Summary Deck -->
+        <div class="course-matrix-summary-deck">
+          <div class="c-kpi-chip kpi-glow-indigo">
+            <span class="c-kpi-lbl">Total Courses</span>
+            <span class="c-kpi-val" id="cm-total-courses">6 Enrolled</span>
+          </div>
+          <div class="c-kpi-chip kpi-glow-emerald">
+            <span class="c-kpi-lbl">Safe Status (≥75%)</span>
+            <span class="c-kpi-val text-emerald" id="cm-safe-courses">0 Subjects</span>
+          </div>
+          <div class="c-kpi-chip kpi-glow-rose">
+            <span class="c-kpi-lbl">Action Required (&lt;75%)</span>
+            <span class="c-kpi-val text-rose" id="cm-critical-courses">0 Subjects</span>
+          </div>
+          <div class="c-kpi-chip kpi-glow-cyan">
+            <span class="c-kpi-lbl">Compliance Target</span>
+            <span class="c-kpi-val text-cyan" id="cm-target-pct">75.0% Minimum</span>
+          </div>
+        </div>
+
+        <!-- Course Cards Matrix Grid -->
+        <div class="courses-cards-grid" id="subjects-grid"></div>
+
+        <!-- Comprehensive Course Ledger Panel -->
+        <div class="app-card-panel" style="margin-top:1.5rem">
+          <div class="ledger-header-row">
+            <div>
+              <h3 class="panel-heading">🏛️ Comprehensive Course Academic Ledger</h3>
+              <p class="panel-subheading">Full audit of all 6 registered semester courses in Room MV 308.</p>
+            </div>
+            <button class="btn-action-secondary" onclick="navigate('whatif')"
+              style="font-size:0.78rem;padding:0.4rem 0.85rem">
+              🔮 Open What-If Simulator
+            </button>
+          </div>
+
+          <div class="table-responsive" style="margin-top:1rem">
+            <table class="app-table matrix-ledger-table">
+              <thead>
+                <tr>
+                  <th>Course Title</th>
+                  <th>Code</th>
+                  <th>Category</th>
+                  <th>Conducted</th>
+                  <th>Attended</th>
+                  <th>Missed</th>
+                  <th>Attendance %</th>
+                  <th>Status &amp; Action</th>
+                </tr>
+              </thead>
+              <tbody id="subjects-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           4. AI COPILOT ADVISOR
+           ============================================================ -->
+      <section class="app-view" id="page-advisor">
+        <div class="view-intro-header">
+          <h2 class="view-title">AI Copilot Attendance Advisor</h2>
+          <p class="view-subtitle">Predictive analytics, safe bunk margins, and shortage recovery plans.</p>
+        </div>
+
+        <div class="app-card-panel" id="advisor-overall"></div>
+
+        <div class="app-2-col-grid" style="margin-top:1.5rem">
+          <div class="app-card-panel">
+            <h3 class="panel-heading">Subject-Wise Strategy</h3>
+            <div id="advisor-subjects" class="advisor-list-stack" style="margin-top:1rem"></div>
+          </div>
+
+          <div class="app-card-panel">
+            <h3 class="panel-heading">Academic Safety Guidelines</h3>
+            <div id="advisor-recs" class="advisor-list-stack" style="margin-top:1rem"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           5. WHAT-IF SIMULATOR
+           ============================================================ -->
+      <section class="app-view" id="page-whatif">
+        <div class="view-intro-header">
+          <h2 class="view-title">What-If Attendance Simulator</h2>
+          <p class="view-subtitle">Model future skips or streaks to see immediate percentage outcomes.</p>
+        </div>
+
+        <div class="app-2-col-grid">
+          <div class="app-card-panel border-rose">
+            <h3 class="panel-heading">Scenario A: Skip Future Lectures</h3>
+            <p class="panel-subheading">Calculate attendance drop when missing classes</p>
+            <div class="sim-input-group" style="margin-top:1rem">
+              <label>Lectures you plan to skip:</label>
+              <input type="number" id="wi-miss" min="0" max="200" placeholder="e.g. 5" class="app-input-text"
+                oninput="runWhatIf()" />
+            </div>
+            <div id="wi-miss-result" class="sim-output-box"></div>
+          </div>
+
+          <div class="app-card-panel border-emerald">
+            <h3 class="panel-heading">Scenario B: Maintain Attendance</h3>
+            <p class="panel-subheading">Calculate gain from attending upcoming sessions</p>
+            <div class="sim-input-group" style="margin-top:1rem">
+              <label>Consecutive lectures to attend:</label>
+              <input type="number" id="wi-attend" min="0" max="200" placeholder="e.g. 8" class="app-input-text"
+                oninput="runWhatIf()" />
+            </div>
+            <div id="wi-attend-result" class="sim-output-box"></div>
+          </div>
+        </div>
+
+        <div class="app-card-panel" style="margin-top:1.5rem">
+          <h3 class="panel-heading">Scenario C: Course-Level Deep Simulation</h3>
+          <div class="sim-3-col-row" style="margin-top:1rem">
+            <div>
+              <label>Target Course</label>
+              <select id="wi-subject" class="app-select" onchange="runWhatIf()"></select>
+            </div>
+            <div>
+              <label>Lectures to attend</label>
+              <input type="number" id="wi-sub-attend" min="0" max="100" placeholder="0" class="app-input-text"
+                oninput="runWhatIf()" />
+            </div>
+            <div>
+              <label>Lectures to skip</label>
+              <input type="number" id="wi-sub-miss" min="0" max="100" placeholder="0" class="app-input-text"
+                oninput="runWhatIf()" />
+            </div>
+          </div>
+          <div id="wi-sub-result" class="sim-output-box" style="margin-top:1.2rem"></div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           6. REAL-TIME INTERACTIVE CALENDAR WITH GAZETTED HOLIDAYS
+           ============================================================ -->
+      <section class="app-view" id="page-calendar">
+        <div class="view-intro-header">
+          <h2 class="view-title">Academic &amp; Holiday Calendar</h2>
+          <p class="view-subtitle">Real-time calendar synced with official 2026 Telangana gazetted holidays &amp;
+            college schedule.</p>
+        </div>
+
+        <!-- Real Wall Calendar Master Deck -->
+        <div class="real-calendar-container">
+
+          <!-- Month Control & Navigation Toolbar -->
+          <div class="calendar-toolbar-header">
+            <div class="cal-nav-controls">
+              <button class="btn-cal-action" onclick="calPrev()" title="Previous Month">‹ Prev</button>
+              <button class="btn-cal-action btn-cal-today" onclick="calJumpToday()">⚡ Jump to Today</button>
+              <button class="btn-cal-action" onclick="calNext()" title="Next Month">Next ›</button>
+            </div>
+            <div class="cal-current-month-display">
+              <span id="cal-month-label" class="cal-month-headline">August 2026</span>
+              <span class="cal-year-badge" id="cal-year-badge">2026 Academic Year</span>
+            </div>
+          </div>
+
+          <!-- Month Quick KPI Metrics Bar -->
+          <div class="cal-month-metrics-bar" id="cal-month-kpis">
+            <div class="cal-kpi-chip kpi-glow-emerald">
+              <span class="kpi-chip-label">Present Sessions</span>
+              <span class="kpi-chip-number" id="cal-kpi-present">0</span>
+            </div>
+            <div class="cal-kpi-chip kpi-glow-rose">
+              <span class="kpi-chip-label">Missed Classes</span>
+              <span class="kpi-chip-number" id="cal-kpi-absent">0</span>
+            </div>
+            <div class="cal-kpi-chip kpi-glow-purple">
+              <span class="kpi-chip-label">Official Holidays</span>
+              <span class="kpi-chip-number" id="cal-kpi-holidays">0</span>
+            </div>
+            <div class="cal-kpi-chip kpi-glow-cyan">
+              <span class="kpi-chip-label">Month Attendance</span>
+              <span class="kpi-chip-number" id="cal-kpi-rate">100.0%</span>
+            </div>
+          </div>
+
+          <!-- Calendar Status Color Guide -->
+          <div class="cal-status-legend">
+            <span class="legend-tag"><span class="legend-color-dot dot-present"></span> Present</span>
+            <span class="legend-tag"><span class="legend-color-dot dot-partial"></span> Partial</span>
+            <span class="legend-tag"><span class="legend-color-dot dot-absent"></span> Absent</span>
+            <span class="legend-tag"><span class="legend-color-dot dot-holiday"></span> Gazetted Holiday</span>
+            <span class="legend-tag"><span class="legend-color-dot dot-today"></span> Today</span>
+            <span class="legend-tag"><span class="legend-color-dot dot-sunday"></span> Sunday Off</span>
+          </div>
+
+          <!-- Real Calendar 7-Column Grid -->
+          <div class="real-calendar-grid-card">
+            <div id="calendar-grid" class="real-calendar-cells-grid"></div>
+          </div>
+
+          <!-- Upcoming Official Holidays List -->
+          <div class="upcoming-holidays-card">
+            <div class="holidays-header-row">
+              <h3 class="holidays-card-title">🏛️ Official 2026 Gazetted &amp; College Holidays</h3>
+              <span class="holidays-badge">Telangana Academic Schedule</span>
+            </div>
+            <div class="holidays-scroll-grid" id="upcoming-holidays-list">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ============================================================
+           7. MASTER ACADEMIC TIMETABLE (PROFESSIONAL & REAL-TIME)
+           ============================================================ -->
+      <section class="app-view" id="page-timetable">
+        <div class="view-intro-header">
+          <h2 class="view-title">Master Academic Timetable</h2>
+          <p class="view-subtitle">Official semester timetable for CSE (AI &amp; ML) · II B.Tech · I SEM · Room MV 308
+          </p>
+        </div>
+
+        <!-- Academic Metadata Card -->
+        <div class="timetable-academic-deck">
+          <div class="tt-meta-item">
+            <span class="tt-meta-label">Branch &amp; Specialization</span>
+            <span class="tt-meta-val">CSE (AI &amp; ML)</span>
+          </div>
+          <div class="tt-meta-item">
+            <span class="tt-meta-label">Academic Year / Sem</span>
+            <span class="tt-meta-val">II B.Tech · I SEM (2026–27)</span>
+          </div>
+          <div class="tt-meta-item">
+            <span class="tt-meta-label">Assigned Classroom</span>
+            <span class="tt-meta-val text-cyan">Room MV 308</span>
+          </div>
+          <div class="tt-meta-item">
+            <span class="tt-meta-label">Weekly Schedule</span>
+            <span class="tt-meta-val text-emerald">34 Periods Total</span>
+          </div>
+        </div>
+
+        <!-- Timetable Interactive Container -->
+        <div class="app-card-panel tt-main-panel">
+          <div id="timetable-grid"></div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           8. AUDIT HISTORY
+           ============================================================ -->
+      <section class="app-view" id="page-history">
+        <div class="view-intro-header">
+          <h2 class="view-title">Audit Logs &amp; Archives</h2>
+          <p class="view-subtitle">Audit past attendance records month by month.</p>
+        </div>
+
+        <div class="app-card-panel" style="margin-bottom:1.5rem">
+          <input type="month" id="history-month-picker" onchange="loadHistory()" class="app-input-date" />
+        </div>
+
+        <div class="app-card-panel">
+          <div id="history-list" class="history-list-container"></div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           9. ACHIEVEMENTS
+           ============================================================ -->
+      <section class="app-view" id="page-achievements">
+        <div class="view-intro-header">
+          <h2 class="view-title">Milestones &amp; Badges</h2>
+          <p class="view-subtitle">Unlocked automatically based on real attendance records.</p>
+        </div>
+
+        <div class="achievements-grid" id="achievements-grid"></div>
+      </section>
+
+      <!-- ============================================================
+           10. SETTINGS & PREFERENCES
+           ============================================================ -->
+      <section class="app-view" id="page-settings">
+        <div class="view-intro-header">
+          <h2 class="view-title">Settings &amp; Backup</h2>
+          <p class="view-subtitle">Manage thresholds, semester dates, and data backups.</p>
+        </div>
+
+        <div class="app-2-col-grid">
+          <div class="app-card-panel">
+            <h3 class="panel-heading">Student Information</h3>
+            <div class="info-row"><span class="k">Name:</span><span class="v">Mohammed Shakib</span></div>
+            <div class="info-row"><span class="k">College:</span><span class="v">Sphoorthy Engineering College</span>
+            </div>
+            <div class="info-row"><span class="k">Branch:</span><span class="v">CSE (AI &amp; ML)</span></div>
+            <div class="info-row"><span class="k">Semester:</span><span class="v">II B.Tech · I SEM</span></div>
+            <div class="info-row"><span class="k">Classroom:</span><span class="v">MV 308</span></div>
+          </div>
+
+          <div class="app-card-panel">
+            <h3 class="panel-heading">Target Threshold</h3>
+            <div class="sim-input-group" style="margin-top:1rem">
+              <label>Institutional Minimum Target (%):</label>
+              <input type="number" id="target-input" min="50" max="100" class="app-input-text" />
+            </div>
+            <button class="btn-action-primary" onclick="saveTarget()" style="margin-top:1rem;width:100%">Save
+              Target</button>
+          </div>
+
+          <div class="app-card-panel">
+            <h3 class="panel-heading">Semester Dates</h3>
+            <div class="sim-input-group">
+              <label>Semester Start Date</label>
+              <input type="date" id="sem-start-input" class="app-input-date" style="width:100%" />
+            </div>
+            <div class="sim-input-group" style="margin-top:0.8rem">
+              <label>Semester End Date</label>
+              <input type="date" id="sem-end-input" class="app-input-date" style="width:100%" />
+            </div>
+            <button class="btn-action-primary" onclick="saveSemesterDates()" style="margin-top:1rem;width:100%">Save
+              Semester Dates</button>
+          </div>
+
+          <div class="app-card-panel">
+            <h3 class="panel-heading">Data Control &amp; Backup</h3>
+            <div class="backup-buttons-stack" style="margin-top:1rem">
+              <button class="btn-action-secondary" onclick="exportJSON()">📤 Export JSON Backup</button>
+              <button class="btn-action-secondary" onclick="exportCSV()">📊 Export CSV Spreadsheet</button>
+              <button class="btn-action-secondary" onclick="document.getElementById('import-file').click()">📥 Restore
+                from Backup (.json)</button>
+              <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(event)" />
+              <button class="btn-action-danger" onclick="confirmReset()">🗑️ Factory Reset All Data</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- FLOATING MOBILE / DESKTOP BOTTOM NAVIGATION DOCK WITH ALL PAGES -->
+    <nav class="mobile-bottom-dock">
+      <button class="dock-item-btn active" data-page="dashboard" onclick="navigate('dashboard')"
+        title="Overview Dashboard">
+        <span class="dock-icon">🏠</span>
+        <span class="dock-label">Home</span>
+      </button>
+      <button class="dock-item-btn" data-page="attendance" onclick="navigate('attendance')"
+        title="Today's Schedule & Attendance">
+        <span class="dock-icon">📋</span>
+        <span class="dock-label">Today</span>
+      </button>
+      <button class="dock-item-btn" data-page="subjects" onclick="navigate('subjects')" title="Course Matrix & Ledger">
+        <span class="dock-icon">📚</span>
+        <span class="dock-label">Courses</span>
+      </button>
+      <button class="dock-item-btn" data-page="advisor" onclick="navigate('advisor')" title="AI Copilot Advisor">
+        <span class="dock-icon">🤖</span>
+        <span class="dock-label">Copilot</span>
+      </button>
+      <button class="dock-item-btn" data-page="whatif" onclick="navigate('whatif')" title="What-If Simulator">
+        <span class="dock-icon">🔮</span>
+        <span class="dock-label">Simulator</span>
+      </button>
+      <button class="dock-item-btn" data-page="calendar" onclick="navigate('calendar')" title="Interactive Calendar">
+        <span class="dock-icon">📅</span>
+        <span class="dock-label">Calendar</span>
+      </button>
+      <button class="dock-item-btn" data-page="timetable" onclick="navigate('timetable')" title="Master Timetable">
+        <span class="dock-icon">🗓️</span>
+        <span class="dock-label">Timetable</span>
+      </button>
+      <button class="dock-item-btn" data-page="history" onclick="navigate('history')" title="Audit Logs & History">
+        <span class="dock-icon">📖</span>
+        <span class="dock-label">History</span>
+      </button>
+      <button class="dock-item-btn" data-page="achievements" onclick="navigate('achievements')"
+        title="Badges & Milestones">
+        <span class="dock-icon">🏆</span>
+        <span class="dock-label">Badges</span>
+      </button>
+      <button class="dock-item-btn" data-page="settings" onclick="navigate('settings')" title="Settings & Backup">
+        <span class="dock-icon">⚙️</span>
+        <span class="dock-label">Settings</span>
+      </button>
+    </nav>
+
+  </div>
+
+  <!-- MODALS -->
+  <div id="cal-detail-modal" class="app-modal-backdrop hidden">
+    <div class="app-modal-card">
+      <div class="modal-head">
+        <h3 id="cal-modal-title">Lecture Inspector</h3>
+        <button class="modal-close-btn"
+          onclick="document.getElementById('cal-detail-modal').classList.add('hidden')">✕</button>
+      </div>
+      <div class="modal-body" id="cal-modal-body"></div>
+      <div class="modal-foot">
+        <button class="btn-action-primary" onclick="goToAttendanceFromCal()">✏️ Edit Day's Log</button>
+        <button class="btn-action-secondary"
+          onclick="document.getElementById('cal-detail-modal').classList.add('hidden')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="reset-modal" class="app-modal-backdrop hidden">
+    <div class="app-modal-card modal-compact">
+      <div class="modal-head">
+        <h3>Confirm Factory Reset</h3>
+        <button class="modal-close-btn"
+          onclick="document.getElementById('reset-modal').classList.add('hidden')">✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="color:var(--text-secondary);font-size:0.92rem;line-height:1.5">
+          This will wipe all attendance data and return to defaults. Make sure to download a backup first.
+        </p>
+      </div>
+      <div class="modal-foot" style="flex-direction:column;gap:0.5rem">
+        <button class="btn-action-danger" onclick="resetAllData()" style="width:100%">Yes, Wipe Everything</button>
+        <button class="btn-action-secondary" onclick="document.getElementById('reset-modal').classList.add('hidden')"
+          style="width:100%">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="toast" class="mobile-toast hidden"></div>
+
+  <script src="app.js"></script>
+</body>
+
+</html>
