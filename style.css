@@ -3048,3 +3048,98 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     grid-template-columns: repeat(3, 1fr);
   }
 }
+
+/* ============================================================
+   CENTERED FLOATING BOTTOM NAVIGATION DOCK
+   ============================================================ */
+
+.mobile-bottom-dock {
+  position: fixed !important;
+  bottom: 1.25rem !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  z-index: 9999 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.35rem !important;
+  background: rgba(14, 20, 34, 0.94) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  padding: 0.4rem 0.8rem !important;
+  border-radius: 9999px !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65), 0 0 20px rgba(99, 102, 241, 0.25) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  max-width: 95vw !important;
+  overflow-x: auto !important;
+  scrollbar-width: none !important;
+}
+
+.mobile-bottom-dock::-webkit-scrollbar {
+  display: none !important;
+}
+
+.dock-item-btn {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: transparent !important;
+  border: 1px solid transparent !important;
+  color: #94a3b8 !important;
+  padding: 0.4rem 0.75rem !important;
+  border-radius: 9999px !important;
+  cursor: pointer !important;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  font-family: inherit !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+  gap: 2px !important;
+  text-decoration: none !important;
+}
+
+.dock-item-btn:hover {
+  color: #ffffff !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  transform: translateY(-2px) !important;
+}
+
+.dock-item-btn.active {
+  background: linear-gradient(135deg, #6366f1, #06b6d4) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.45) !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
+  font-weight: 800 !important;
+}
+
+.dock-icon {
+  font-size: 1.15rem !important;
+  line-height: 1 !important;
+  display: block !important;
+}
+
+.dock-label {
+  font-size: 0.62rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.2px !important;
+  display: block !important;
+}
+
+[data-theme="light"] .mobile-bottom-dock {
+  background: rgba(255, 255, 255, 0.96) !important;
+  border: 1px solid #cbd5e1 !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+}
+
+[data-theme="light"] .dock-item-btn {
+  color: #475569 !important;
+}
+
+[data-theme="light"] .dock-item-btn:hover {
+  color: #0f172a !important;
+  background: #f1f5f9 !important;
+}
+
+[data-theme="light"] .dock-item-btn.active {
+  color: #ffffff !important;
+}
