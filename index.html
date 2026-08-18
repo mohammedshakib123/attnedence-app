@@ -36,7 +36,10 @@
       overflow-x: auto !important;
       scrollbar-width: none !important;
     }
-    .mobile-bottom-dock::-webkit-scrollbar { display: none !important; }
+
+    .mobile-bottom-dock::-webkit-scrollbar {
+      display: none !important;
+    }
 
     .dock-item-btn {
       display: flex !important;
@@ -57,11 +60,13 @@
       text-decoration: none !important;
       outline: none !important;
     }
+
     .dock-item-btn:hover {
       color: #ffffff !important;
       background: rgba(255, 255, 255, 0.1) !important;
       transform: translateY(-2px) !important;
     }
+
     .dock-item-btn.active {
       background: linear-gradient(135deg, #6366f1, #06b6d4) !important;
       color: #ffffff !important;
@@ -69,17 +74,38 @@
       border-color: rgba(255, 255, 255, 0.3) !important;
       font-weight: 800 !important;
     }
-    .dock-icon { font-size: 1.15rem !important; line-height: 1 !important; display: block !important; }
-    .dock-label { font-size: 0.62rem !important; font-weight: 700 !important; letter-spacing: 0.2px !important; display: block !important; }
+
+    .dock-icon {
+      font-size: 1.15rem !important;
+      line-height: 1 !important;
+      display: block !important;
+    }
+
+    .dock-label {
+      font-size: 0.62rem !important;
+      font-weight: 700 !important;
+      letter-spacing: 0.2px !important;
+      display: block !important;
+    }
 
     [data-theme="light"] .mobile-bottom-dock {
       background: rgba(255, 255, 255, 0.98) !important;
       border: 1px solid #cbd5e1 !important;
       box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15) !important;
     }
-    [data-theme="light"] .dock-item-btn { color: #475569 !important; }
-    [data-theme="light"] .dock-item-btn:hover { color: #0f172a !important; background: #f1f5f9 !important; }
-    [data-theme="light"] .dock-item-btn.active { color: #ffffff !important; }
+
+    [data-theme="light"] .dock-item-btn {
+      color: #475569 !important;
+    }
+
+    [data-theme="light"] .dock-item-btn:hover {
+      color: #0f172a !important;
+      background: #f1f5f9 !important;
+    }
+
+    [data-theme="light"] .dock-item-btn.active {
+      color: #ffffff !important;
+    }
   </style>
 
 </head>

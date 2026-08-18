@@ -3143,3 +3143,342 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 [data-theme="light"] .dock-item-btn.active {
   color: #ffffff !important;
 }
+
+/* ============================================================
+   ATTENDANCE LOCK SYSTEM STYLES
+   ============================================================ */
+
+.lock-badge-inline {
+  font-size: 0.75rem;
+  font-weight: 800;
+  background: rgba(16, 185, 129, 0.12);
+  color: var(--color-emerald);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  padding: 0.15rem 0.5rem;
+  border-radius: 9999px;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+
+.lecture-touch-card.card-locked {
+  border-color: rgba(16, 185, 129, 0.25) !important;
+}
+
+.lecture-touch-card.card-locked::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 3px;
+  height: 100%;
+  background: linear-gradient(180deg, var(--color-emerald), transparent);
+}
+
+/* =========================================================
+   MOBILE DOCK FIX — KEEP ORIGINAL DOCK
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+  .mobile-bottom-dock {
+    position: fixed !important;
+
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
+
+    width: calc(100% - 12px) !important;
+    max-width: calc(100vw - 12px) !important;
+
+    height: 62px !important;
+
+    display: flex !important;
+    flex-direction: row !important;
+
+    /* IMPORTANT: don't center overflowing items */
+    justify-content: flex-start !important;
+    align-items: center !important;
+
+    gap: 2px !important;
+
+    padding: 5px !important;
+
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+
+    box-sizing: border-box !important;
+
+    bottom: 8px !important;
+
+    z-index: 99999 !important;
+
+    border-radius: 9999px !important;
+  }
+
+  .dock-item-btn {
+    flex: 0 0 auto !important;
+    flex-shrink: 0 !important;
+
+    min-width: 52px !important;
+
+    padding: 5px 7px !important;
+
+    display: flex !important;
+    flex-direction: column !important;
+
+    align-items: center !important;
+    justify-content: center !important;
+
+    white-space: nowrap !important;
+  }
+
+  .dock-icon {
+    font-size: 18px !important;
+    line-height: 18px !important;
+  }
+
+  .dock-label {
+    font-size: 9px !important;
+    line-height: 11px !important;
+
+    white-space: nowrap !important;
+  }
+
+  /* Hide scrollbar but KEEP scrolling */
+  .mobile-bottom-dock::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .mobile-bottom-dock {
+    scrollbar-width: none !important;
+  }
+}
+
+
+/* ============================================================
+   📱 MOBILE NAV — PERFECT 8 ITEM FIT
+   HOME → TODAY → COURSES → COPILOT → SIMULATOR
+   → CALENDAR → TIMETABLE → HISTORY
+
+   NO SCROLL
+   NO CUTTING
+   NO OVERFLOW
+   ============================================================ */
+
+@media screen and (max-width: 600px) {
+
+  /* Hide Badges */
+  .mobile-bottom-dock .dock-item-btn:nth-child(9) {
+    display: none !important;
+  }
+
+  /* Hide Settings */
+  .mobile-bottom-dock .dock-item-btn:nth-child(10) {
+    display: none !important;
+  }
+
+
+  /* ==========================================================
+     MAIN DOCK
+     ========================================================== */
+
+  .mobile-bottom-dock {
+
+    position: fixed !important;
+
+    left: 50% !important;
+    right: auto !important;
+
+    transform: translateX(-50%) !important;
+
+    bottom: 8px !important;
+
+    width: calc(100vw - 10px) !important;
+    max-width: calc(100vw - 10px) !important;
+
+    height: 62px !important;
+    min-height: 62px !important;
+
+    padding: 4px !important;
+
+    box-sizing: border-box !important;
+
+    display: grid !important;
+
+    /* EXACTLY 8 equal columns */
+    grid-template-columns:
+      repeat(8, minmax(0, 1fr)) !important;
+
+    grid-template-rows: 1fr !important;
+
+    gap: 0 !important;
+
+    overflow: hidden !important;
+
+    justify-content: stretch !important;
+    align-items: stretch !important;
+
+    border-radius: 9999px !important;
+
+    z-index: 99999 !important;
+
+    touch-action: none !important;
+  }
+
+
+  /* ==========================================================
+     EACH BUTTON
+     ========================================================== */
+
+  .mobile-bottom-dock .dock-item-btn {
+
+    display: flex !important;
+
+    flex-direction: column !important;
+
+    align-items: center !important;
+
+    justify-content: center !important;
+
+    width: 100% !important;
+
+    min-width: 0 !important;
+
+    max-width: none !important;
+
+    height: 100% !important;
+
+    padding: 2px 0 !important;
+
+    margin: 0 !important;
+
+    box-sizing: border-box !important;
+
+    gap: 1px !important;
+
+    flex: none !important;
+
+    flex-shrink: 1 !important;
+
+    overflow: hidden !important;
+
+    white-space: nowrap !important;
+
+    border-radius: 10px !important;
+
+    transform: none !important;
+  }
+
+
+  /* ==========================================================
+     ICON
+     ========================================================== */
+
+  .mobile-bottom-dock .dock-icon {
+
+    display: block !important;
+
+    font-size: 15px !important;
+
+    line-height: 16px !important;
+
+    width: 100% !important;
+
+    text-align: center !important;
+
+    flex-shrink: 0 !important;
+  }
+
+
+  /* ==========================================================
+     LABEL
+     ========================================================== */
+
+  .mobile-bottom-dock .dock-label {
+
+    display: block !important;
+
+    width: 100% !important;
+
+    max-width: 100% !important;
+
+    font-size: 6px !important;
+
+    line-height: 7px !important;
+
+    font-weight: 700 !important;
+
+    letter-spacing: 0 !important;
+
+    text-align: center !important;
+
+    white-space: nowrap !important;
+
+    overflow: hidden !important;
+
+    text-overflow: ellipsis !important;
+
+    flex-shrink: 1 !important;
+  }
+
+
+  /* No hover movement on mobile */
+  .mobile-bottom-dock .dock-item-btn:hover {
+    transform: none !important;
+  }
+
+  .mobile-bottom-dock .dock-item-btn.active {
+    transform: none !important;
+  }
+
+}
+
+
+/* ============================================================
+   📱 VERY SMALL PHONES
+   ============================================================ */
+
+@media screen and (max-width: 360px) {
+
+  .mobile-bottom-dock {
+
+    width: calc(100vw - 6px) !important;
+    max-width: calc(100vw - 6px) !important;
+
+    height: 60px !important;
+    min-height: 60px !important;
+
+    padding: 3px !important;
+  }
+
+
+  .mobile-bottom-dock .dock-icon {
+    font-size: 14px !important;
+    line-height: 15px !important;
+  }
+
+
+  .mobile-bottom-dock .dock-label {
+    font-size: 5.5px !important;
+    line-height: 6px !important;
+  }
+
+}
+
+/* ============================================================
+   DASHBOARD HERO — HIDE FULL DAY PRESENT / ABSENT
+   KEEP TOGGLE HOLIDAY
+   ============================================================ */
+
+.hero-action-buttons .btn-action-primary {
+  display: none !important;
+}
+
+.hero-action-buttons .btn-action-secondary:nth-child(2) {
+  display: none !important;
+}
+
+
+
+
+

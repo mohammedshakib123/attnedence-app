@@ -88,6 +88,9 @@ let selectedDate = todayStr();
 let calLastDate = null;
 let activeTimetableDay = 'Monday';
 
+// Dates currently unlocked for editing (in-memory only, resets on reload)
+const editUnlockedDates = new Set();
+
 // ============================================================
 // STORAGE & UTILITIES
 // ============================================================
@@ -154,6 +157,39 @@ function getRecord(dateStr) {
 function setRecord(dateStr, record) {
   appData.attendance[dateStr] = record;
   saveData();
+}
+
+// Check if a date's attendance is locked (saved + not unlocked for editing)
+function isDateLocked(dateStr) {
+  if (editUnlockedDates.has(dateStr)) return false;
+  const rec = getRecord(dateStr);
+  return rec && rec.locked === true;
+}
+
+// Lock a date's attendance record (called after save)
+function lockDateRecord(dateStr) {
+  const rec = getRecord(dateStr);
+  if (rec) {
+    rec.locked = true;
+    setRecord(dateStr, rec);
+  }
+}
+
+// Unlock a date for editing (in-memory only)
+function unlockDateForEdit(dateStr) {
+  editUnlockedDates.add(dateStr);
+  loadAttendancePage();
+  renderTodayCards(dateStr);
+  showToast('✏️ Edit mode enabled. Note: Present classes cannot be changed.');
+}
+
+// Re-lock a date after editing
+function relockDate(dateStr) {
+  editUnlockedDates.delete(dateStr);
+  lockDateRecord(dateStr);
+  loadAttendancePage();
+  renderTodayCards(dateStr);
+  showToast('🔒 Attendance locked and saved!');
 }
 
 function isHoliday(dateStr) {
@@ -701,9 +737,11 @@ function renderTodayCards(todayS) {
     const existing = todayRec.find(c => c.slotIdx === idx && c.subject === cls.subject);
     const status = isHoliday(todayS) ? 'holiday' : (existing ? existing.status : 'unmarked');
     const isLive = isToday(todayS) && currentTime >= cls.start && currentTime <= cls.end;
+    const dayLocked = isDateLocked(todayS);
+    const isPermanentPresent = status === 'present'; // Present is permanent even in edit mode
 
     const card = document.createElement('div');
-    card.className = `lecture-touch-card ${isLive ? 'is-live' : ''}`;
+    card.className = `lecture-touch-card ${isLive ? 'is-live' : ''} ${dayLocked ? 'card-locked' : ''}`;
     card.innerHTML = `
       <div>
         <div class="l-top-row">
@@ -711,13 +749,22 @@ function renderTodayCards(todayS) {
           <span class="l-badge ${isLive ? 'chip-live' : status === 'present' ? 'chip-present' : status === 'absent' ? 'chip-absent' : 'chip-unmarked'}">
             ${isLive ? 'LIVE NOW' : status.toUpperCase()}
           </span>
+          ${dayLocked ? '<span class="lock-badge-inline">🔒 LOCKED</span>' : ''}
         </div>
         <div class="l-title">${sub.name}</div>
         <div class="l-code">Room MV 308 · ${sub.abbr}</div>
       </div>
       <div class="l-actions-bar">
-        <button class="btn-l-toggle p-btn ${status === 'present' ? 'active' : ''}" onclick="setClassStatus('${todayS}', ${idx}, '${cls.subject}', 'present')">✓ Present</button>
-        <button class="btn-l-toggle a-btn ${status === 'absent' ? 'active' : ''}" onclick="setClassStatus('${todayS}', ${idx}, '${cls.subject}', 'absent')">✕ Absent</button>
+        <button class="btn-l-toggle p-btn ${status === 'present' ? 'active' : ''}"
+          onclick="setClassStatus('${todayS}', ${idx}, '${cls.subject}', 'present')"
+          ${dayLocked || isPermanentPresent ? 'disabled style="opacity:0.45;cursor:not-allowed"' : ''}>
+          ✓ Present${isPermanentPresent ? ' 🔒' : ''}
+        </button>
+        <button class="btn-l-toggle a-btn ${status === 'absent' ? 'active' : ''}"
+          onclick="setClassStatus('${todayS}', ${idx}, '${cls.subject}', 'absent')"
+          ${dayLocked || isPermanentPresent ? 'disabled style="opacity:0.45;cursor:not-allowed"' : ''}>
+          ✕ Absent
+        </button>
       </div>
     `;
     container.appendChild(card);
@@ -730,14 +777,37 @@ function setClassStatus(dateStr, idx, subject, newStatus) {
     return;
   }
 
+  // Block changes if date is locked
+  if (isDateLocked(dateStr)) {
+    showToast('🔒 Attendance is locked. Tap ✏️ Edit to make changes.');
+    return;
+  }
+
   let rec = getRecord(dateStr) || { holiday: false, classes: [] };
   if (!rec.classes) rec.classes = [];
 
   const existingIdx = rec.classes.findIndex(c => c.slotIdx === idx && c.subject === subject);
+
+  // Block downgrade from Present — Present is permanent
+  if (existingIdx >= 0 && rec.classes[existingIdx].status === 'present' && newStatus !== 'present') {
+    showToast('🛡️ Present attendance is permanent and cannot be changed.');
+    return;
+  }
+
   if (existingIdx >= 0) {
     rec.classes[existingIdx].status = newStatus;
   } else {
     rec.classes.push({ subject, slotIdx: idx, status: newStatus });
+  }
+
+  // Auto-lock if all periods on today's date are marked (not unmarked)
+  const schedule = getTimetableForDate(dateStr);
+  const allMarked = schedule.length > 0 && schedule.every((cls, i) => {
+    const found = rec.classes.find(c => c.slotIdx === i);
+    return found && found.status !== 'unmarked';
+  });
+  if (allMarked && !editUnlockedDates.has(dateStr)) {
+    rec.locked = true;
   }
 
   setRecord(dateStr, rec);
@@ -1047,16 +1117,67 @@ function loadAttendancePage() {
 
   const banner = document.getElementById('attendance-day-info');
   const schedule = getTimetableForDate(dateStr);
-  if (banner) {
-    banner.innerHTML = `📅 <strong>${formatDateFull(dateStr)}</strong> &nbsp;•&nbsp; ${schedule.length} scheduled periods`;
-  }
+  const dayLocked = isDateLocked(dateStr);
 
-  const quickActions = document.getElementById('att-quick-actions');
-  if (quickActions) {
-    quickActions.innerHTML = `
-      <button class="btn-action-primary" onclick="markSelectedAll('present')">✓ All Present</button>
-      <button class="btn-action-secondary" onclick="markSelectedAll('absent')" style="color:var(--color-rose) !important;border-color:var(--color-rose)">✕ All Absent</button>
-      <button class="btn-action-secondary" onclick="markSelectedHoliday()">🏖️ Holiday</button>
+  if (banner) {
+    const lockBanner = dayLocked ? `
+      <div style="
+        display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.75rem;
+        background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);
+        border-radius:14px;padding:0.85rem 1.2rem;margin-bottom:1rem;
+      ">
+        <div style="display:flex;align-items:center;gap:0.6rem">
+          <span style="font-size:1.3rem">🔒</span>
+          <div>
+            <div style="font-size:0.85rem;font-weight:800;color:var(--color-emerald)">Attendance Locked & Saved</div>
+            <div style="font-size:0.75rem;color:var(--text-muted)">Present classes are permanent. You can still change Absent entries in Edit mode.</div>
+          </div>
+        </div>
+        <button onclick="unlockDateForEdit('${dateStr}')" style="
+          background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.4);color:var(--color-amber);
+          padding:0.45rem 1rem;border-radius:9999px;font-weight:800;font-size:0.82rem;cursor:pointer;
+        ">✏️ Edit Attendance</button>
+      </div>
+    ` : (editUnlockedDates.has(dateStr) ? `
+      <div style="
+        display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.75rem;
+        background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);
+        border-radius:14px;padding:0.85rem 1.2rem;margin-bottom:1rem;
+      ">
+        <div style="display:flex;align-items:center;gap:0.6rem">
+          <span style="font-size:1.3rem">✏️</span>
+          <div>
+            <div style="font-size:0.85rem;font-weight:800;color:var(--color-amber)">Edit Mode Active</div>
+            <div style="font-size:0.75rem;color:var(--text-muted)">Note: Classes marked Present 🔒 cannot be changed.</div>
+          </div>
+        </div>
+        <button onclick="relockDate('${dateStr}')" style="
+          background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.4);color:var(--color-emerald);
+          padding:0.45rem 1rem;border-radius:9999px;font-weight:800;font-size:0.82rem;cursor:pointer;
+        ">🔒 Save & Lock</button>
+      </div>
+    ` : '');
+
+    banner.innerHTML = `
+      ${lockBanner}
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.75rem;margin-bottom:1rem">
+        <div>
+          <div style="font-size:0.75rem;font-weight:800;color:var(--text-muted)">ATTENDANCE LOG</div>
+          <div style="font-size:1rem;font-weight:800;color:var(--text-primary);margin-top:2px">📅 ${formatDateFull(dateStr)}</div>
+          <div style="font-size:0.78rem;color:var(--text-muted);margin-top:2px">${schedule.length} periods scheduled</div>
+        </div>
+        <input type="date" id="attendance-date-picker" value="${dateStr}" onchange="loadAttendancePage()" style="
+          background:var(--bg-subtle);border:1px solid var(--border-glass);color:var(--text-primary);
+          padding:0.5rem 0.85rem;border-radius:10px;font-size:0.85rem;font-family:inherit;
+        " />
+      </div>
+      ${ !dayLocked ? `
+      <div id="att-quick-actions" style="display:flex;gap:0.6rem;flex-wrap:wrap;margin-bottom:1.25rem">
+        <button onclick="markSelectedAll('present')" style="background:var(--color-emerald);color:#fff;border:none;padding:0.55rem 1rem;border-radius:9px;font-weight:700;font-size:0.82rem;cursor:pointer">✓ All Present</button>
+        <button onclick="markSelectedAll('absent')" style="background:var(--bg-subtle);border:1px solid rgba(244,63,94,0.4);color:var(--color-rose);padding:0.55rem 1rem;border-radius:9px;font-weight:700;font-size:0.82rem;cursor:pointer">✕ All Absent</button>
+        <button onclick="markSelectedHoliday()" style="background:var(--bg-subtle);border:1px solid rgba(168,85,247,0.4);color:var(--color-purple);padding:0.55rem 1rem;border-radius:9px;font-weight:700;font-size:0.82rem;cursor:pointer">🏖️ Holiday</button>
+        <button onclick="saveAndLockDay('${dateStr}')" style="background:var(--color-indigo);color:#fff;border:none;padding:0.55rem 1rem;border-radius:9px;font-weight:800;font-size:0.82rem;cursor:pointer;margin-left:auto">💾 Save & Lock</button>
+      </div>` : '' }
     `;
   }
 
@@ -1104,29 +1225,56 @@ function loadAttendancePage() {
     const sub = getSubjectById(cls.subject);
     const existing = todayRec.find(c => c.slotIdx === idx && c.subject === cls.subject);
     const status = existing ? existing.status : 'unmarked';
+    const isPermanentPresent = status === 'present';
+    const isLocked = isDateLocked(dateStr);
 
     const card = document.createElement('div');
-    card.className = 'lecture-touch-card';
+    card.className = `lecture-touch-card${isLocked ? ' card-locked' : ''}`;
     card.innerHTML = `
       <div>
         <div class="l-top-row">
           <span class="l-time">⏰ ${formatTime12(cls.start)} – ${formatTime12(cls.end)}</span>
-          <span class="l-badge ${status === 'present' ? 'chip-present' : status === 'absent' ? 'chip-absent' : 'chip-unmarked'}">${status.toUpperCase()}</span>
+          <div style="display:flex;align-items:center;gap:0.4rem">
+            <span class="l-badge ${status === 'present' ? 'chip-present' : status === 'absent' ? 'chip-absent' : 'chip-unmarked'}">${status.toUpperCase()}</span>
+            ${isLocked ? '<span class="lock-badge-inline">🔒</span>' : ''}
+          </div>
         </div>
         <div class="l-title">${sub.name}</div>
         <div class="l-code">${sub.abbr} · MV 308</div>
       </div>
       <div class="l-actions-bar">
-        <button class="btn-l-toggle p-btn ${status === 'present' ? 'active' : ''}" onclick="setClassStatus('${dateStr}', ${idx}, '${cls.subject}', 'present')">✓ Present</button>
-        <button class="btn-l-toggle a-btn ${status === 'absent' ? 'active' : ''}" onclick="setClassStatus('${dateStr}', ${idx}, '${cls.subject}', 'absent')">✕ Absent</button>
+        <button class="btn-l-toggle p-btn ${status === 'present' ? 'active' : ''}"
+          onclick="setClassStatus('${dateStr}', ${idx}, '${cls.subject}', 'present')"
+          ${isLocked || isPermanentPresent ? 'disabled style="opacity:0.4;cursor:not-allowed"' : ''}>
+          ✓ Present${isPermanentPresent ? ' 🔒' : ''}
+        </button>
+        <button class="btn-l-toggle a-btn ${status === 'absent' ? 'active' : ''}"
+          onclick="setClassStatus('${dateStr}', ${idx}, '${cls.subject}', 'absent')"
+          ${isLocked || isPermanentPresent ? 'disabled style="opacity:0.4;cursor:not-allowed"' : ''}>
+          ✕ Absent
+        </button>
       </div>
     `;
     container.appendChild(card);
   });
 }
 
+function saveAndLockDay(dateStr) {
+  const rec = getRecord(dateStr);
+  if (!rec || (rec.classes || []).length === 0) {
+    showToast('⚠️ No attendance marked yet. Mark at least one period first.');
+    return;
+  }
+  relockDate(dateStr);
+  showToast('💾 Attendance saved & locked!');
+  renderDashboard();
+}
+
 function saveAttendance() {
-  showToast('💾 Attendance synchronized!');
+  lockDateRecord(selectedDate);
+  editUnlockedDates.delete(selectedDate);
+  showToast('💾 Attendance saved & locked! ✅');
+  loadAttendancePage();
   renderDashboard();
 }
 
